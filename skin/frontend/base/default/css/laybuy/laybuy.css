@@ -1,0 +1,128 @@
+.laybuy-content-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+}
+.laybuy-content-container iframe {
+    border: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.laybuy-popup-modal {
+    display: none;
+    position: fixed;
+    z-index: 999999999;
+    left: 0;
+    top: 0;
+    bottom:0;
+    right: 0 ;
+    overflow: auto;
+}
+#laybuy-popup-outer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+/* Modal Content */
+.laybuy-popup-modal-content {
+    margin: auto;
+    width: 90vw;
+    max-width: 615px;
+    height: 536px;
+    position: relative;
+    border-radius: 0.65em;
+}
+.laybuy-popup-modal-content img{
+    width: 100%;
+    height: 100%;
+}
+.laybuy-popup-modal-content > iframe {
+    width:100%;
+    height:100%;
+    border: 0;
+
+}
+.laybuy-popup-modal-content .close {
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 18px;
+    top: 2px;
+}
+.laybuy-popup-modal-content .close:hover,
+.laybuy-popup-modal-content .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.laybuy-popup-modal-content .bottom-cta-btn{
+    align-self: start;
+    padding: 1.25em 2.8em;
+    margin: 1.5em 0 0;
+    font-size: .8rem;
+    line-height: 0;
+    color: #fff;
+    background: #533187;
+    border: 0;
+    border-radius: 4em;
+    cursor: pointer;
+    outline: 0;
+    margin-left: 40%;
+}
+
+.laybuy_payments-installments {
+    margin: 10px 0;
+    padding: 5px 0;
+    font-size: 11px;
+}
+.laybuy_payments-installments img {
+    display: inline-block;
+    position: relative;
+    height: 20px;
+    top: 5px;
+    margin: 0 5px 0;
+}
+#laybuy-learn-more-open {
+    font-size: 11px;
+    text-decoration: underline;
+    color: #636363;
+}
+#laybuy-learn-more .laybuy-footer {
+    padding: 15px 0;
+}
+#laybuy-learn-more .laybuy_footer-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+#laybuy-learn-more .laybuy-footer__img {
+    width: 175px;
+    margin-bottom: 20px;
+}
+#laybuy-learn-more .laybuy-footer__img img {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+#payment_form_laybuy #laybuy-learn-more {
+    margin-top: 15px;
+}
+#payment_form_laybuy #laybuy-learn-more .title {
+    font-weight: bold;
+    text-align: center;
+}
+#payment_form_laybuy .laybuy_header__laybuy-logo {
+    margin-top: 10px;
+}
+#payment_form_laybuy #laybuy-learn-more .laybuy_header__laybuy-logo img {
+    margin: 0;
+}
+#payment_form_laybuy #laybuy-learn-more .laybuy-container {
+    color: #786dff;
+}

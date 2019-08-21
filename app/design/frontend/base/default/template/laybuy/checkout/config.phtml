@@ -1,0 +1,10 @@
+<?php /**@var Laybuy_Laybuy_Block_Checkout_Config $this */ ?>
+<script>
+    //<![CDATA[
+    window.Laybuy = window.Laybuy || {};
+    window.Laybuy.paymentAction = '<?php echo $this->getPaymentAction() ?>';
+    window.Laybuy.methodCode = '<?php echo $this->getPaymentMethodCode() ?>';
+    window.Laybuy.saveUrl = '<?php echo $this->getSaveUrl() ?>';
+    //]]>
+</script>
+<script src="<?php echo $this->getJsUrl('Laybuy/checkout/onepage.js') ?> "></script>

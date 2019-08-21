@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <laybuy_index_index>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/laybuy/laybuy.css</stylesheet></action>
+        </reference>
+        <reference name="content">
+            <block type="laybuy/cms" name="laybuy.cms.content" template="laybuy/cms.phtml"/>
+        </reference>
+    </laybuy_index_index>
+
+    <catalog_category_view>
+        <reference name="head">
+            <action method="addCss" ifconfig="payment/laybuy/active"><stylesheet>css/laybuy/laybuy.css</stylesheet></action>
+            <action method="addItem" ifconfig="payment/laybuy/active"><type>skin_js</type><name>js/laybuy/category.js</name></action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="laybuy/category_installments" name="laybuy.category.installments" template="laybuy/catalog/category/installments.phtml"/>
+        </reference>
+    </catalog_category_view>
+
+    <catalog_product_view>
+        <reference name="head">
+            <action method="addCss" ifconfig="payment/laybuy/active"><stylesheet>css/laybuy/laybuy.css</stylesheet></action>
+            <action method="addItem" ifconfig="payment/laybuy/active"><type>skin_js</type><name>js/laybuy/product.js</name></action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="laybuy/product_installments" name="laybuy.product.installments" template="laybuy/catalog/product/installments.phtml"/>
+        </reference>
+    </catalog_product_view>
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addCss" ifconfig="payment/laybuy/active"><stylesheet>css/laybuy/laybuy.css</stylesheet></action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="laybuy/checkout_config" name="laybuy.checkout.config" template="laybuy/checkout/config.phtml" />
+        </reference>
+    </checkout_onepage_index>
+
+    <checkout_cart_index>
+        <reference name="head">
+            <action method="addCss" ifconfig="payment/laybuy/active"><stylesheet>css/laybuy/laybuy.css</stylesheet></action>
+            <action method="addItem" ifconfig="payment/laybuy/active"><type>skin_js</type><name>js/laybuy/cart.js</name></action>
+        </reference>
+        <reference name="before_body_end">
+            <block type="laybuy/cart_installments" name="laybuy.cart.installments" template="laybuy/cart/installments.phtml"/>
+        </reference>
+    </checkout_cart_index>
+</layout>

@@ -1,0 +1,7 @@
+<?php
+    /** @var Laybuy_Laybuy_Block_Info $this */
+    $title = $this->escapeHtml($this->getMethod()->getTitle());
+?>
+
+<img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $title ?>"/>
+<p><strong><?php echo $title ?></strong></p>

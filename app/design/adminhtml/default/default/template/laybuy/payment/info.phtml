@@ -1,0 +1,20 @@
+<?php
+/**@var Laybuy_Laybuy_Block_Info $this */
+?>
+<table>
+    <tr>
+        <?php if ($logo = $this->getLogoSrc()): ?>
+            <td><img src="<?php echo $logo ?>" alt="Laybuy Logo"/></td>
+        <?php else: ?>
+            <td><?php echo $this->getConfig()->getTitle() ?></td>
+        <?php endif; ?>
+    </tr>
+    <?php if ($_specificInfo = $this->getSpecificInformation()): ?>
+        <?php foreach ($_specificInfo as $_label => $_value): ?>
+            <tr>
+                <td width="220"><?php echo $this->escapeHtml($_label)?>:</td>
+                <td><?php echo nl2br(implode($this->getValueAsArray($_value, false), "\n")) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</table>

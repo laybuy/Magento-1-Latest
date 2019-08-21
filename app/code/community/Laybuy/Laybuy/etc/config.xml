@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Laybuy_Laybuy>
+            <version>0.1.2</version>
+        </Laybuy_Laybuy>
+    </modules>
+    <global>
+        <models>
+            <laybuy>
+                <class>Laybuy_Laybuy_Model</class>
+                <resourceModel>laybuy_resource</resourceModel>
+            </laybuy>
+            <laybuy_resource>
+                <class>Laybuy_Laybuy_Model_Resource</class>
+                <entities>
+                    <pending_transaction>
+                        <table>laybuy_pending_transaction</table>
+                    </pending_transaction>
+                </entities>
+            </laybuy_resource>
+        </models>
+        <resources>
+            <laybuy_setup>
+                <setup>
+                    <module>Laybuy_Laybuy</module>
+                </setup>
+            </laybuy_setup>
+        </resources>
+        <blocks>
+            <laybuy>
+                <class>Laybuy_Laybuy_Block</class>
+            </laybuy>
+        </blocks>
+        <helpers>
+            <laybuy>
+                <class>Laybuy_Laybuy_Helper</class>
+            </laybuy>
+        </helpers>
+    </global>
+    <frontend>
+        <layout>
+            <updates>
+                <laybuy>
+                    <file>laybuy.xml</file>
+                </laybuy>
+            </updates>
+        </layout>
+        <routers>
+            <laybuy>
+                <use>standard</use>
+                <args>
+                    <module>Laybuy_Laybuy</module>
+                    <frontName>laybuy</frontName>
+                </args>
+            </laybuy>
+        </routers>
+    </frontend>
+    <crontab>
+        <jobs>
+            <laybuy_pending_transactions>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>laybuy/cron::processPendingTransactions</model>
+                </run>
+            </laybuy_pending_transactions>
+            <laybuy_pending_order>
+                <schedule>
+                    <cron_expr>*/10 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>laybuy/cron::processPendingOrders</model>
+                </run>
+            </laybuy_pending_order>
+        </jobs>
+    </crontab>
+    <default>
+        <payment>
+            <laybuy>
+                <active>0</active>
+                <sandbox>0</sandbox>
+                <debug>1</debug>
+                <payment_action>authorize_capture</payment_action>
+                <is_onestepcheckout>0</is_onestepcheckout>
+                <transfer_line_items>0</transfer_line_items>
+                <merchant_id />
+                <merchant_api_key />
+                <merchant_currency />
+                <allowspecific>0</allowspecific>
+                <min_order_total>10</min_order_total>
+                <max_order_total>5000</max_order_total>
+                <model>laybuy/laybuy</model>
+                <title>LayBuy Payment</title>
+                <display_product_page>1</display_product_page>
+                <product_price_block_class>.price-info .price-box</product_price_block_class>
+                <display_category_page>1</display_category_page>
+                <display_cart_page>1</display_cart_page>
+                <display_full_breakdown>1</display_full_breakdown>
+                <disable_cms_page>0</disable_cms_page>
+                <sort_order>2</sort_order>
+            </laybuy>
+        </payment>
+    </default>
+</config> 

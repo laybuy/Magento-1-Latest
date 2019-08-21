@@ -1,0 +1,26 @@
+<?php if ($amount = $this->getInstallmentAmount()) : ?>
+<script type="text/javascript">
+    var laybuyConfig = <?php echo json_encode($this->getInstallmentsConfig()) ?>;
+    Product.OptionsPrice.prototype.reload = Product.OptionsPrice.prototype.reload.wrap(function (callOriginal) {
+        callOriginal();
+        var priceText = jQuery('#product-price-' + laybuyConfig.productId + '.regular-price .price').text();
+        if (!priceText) {
+            priceText = jQuery('#product-price-' + laybuyConfig.productId + '.price').text();
+        }
+        var price = parseFloat(priceText.replace(/[^\d.]/g, ''));
+        if (price == NaN) {
+            return;
+        }
+        price = (price/6).toFixed(2);
+        jQuery('.laybuy_payments-installments').find('b').replaceWith('<b>' + laybuyConfig.currencySymbol + price + '</b>');
+    });
+</script>
+    <div id="laybuy-modal" class="laybuy-popup-modal">
+        <div id="laybuy-popup-outer">
+            <div class="laybuy-popup-modal-content">
+                <iframe src="<?php echo Mage::helper('laybuy')->getPopupIframeSrc() ?>"></iframe>
+                <span class="close">&times;</span>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

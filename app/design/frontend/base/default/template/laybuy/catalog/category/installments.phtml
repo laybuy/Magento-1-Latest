@@ -1,0 +1,5 @@
+<?php if ($this->isEnabled()) : ?>
+<script type="text/javascript">
+    var laybuyConfig = <?php echo json_encode($this->getInstallmentsConfig()) ?>;
+</script>
+<?php endif; ?>

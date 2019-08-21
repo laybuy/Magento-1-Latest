@@ -1,0 +1,32 @@
+<?php /**@var Laybuy_Laybuy_Block_Form $this */ ?>
+<ul class="form-list" id="payment_form_<?php echo $this->getMethodCode(); ?>" style="display: none;">
+    <li>
+        <div id="laybuy-learn-more" class="laybuy-modal">
+            <?php if ($total = Mage::getModel("checkout/session")->getQuote()->getGrandTotal()): ?>
+                <?php $laybuy_payments = number_format( ($total / 6), 2, '.', ','); ?>
+                    <?php if($laybuy_payments): ?>
+                        <div class="laybuy-container">
+                            <p class="title"> Pay it in 6 weekly, interest free payments from <?php echo Mage::helper('core')->currency($laybuy_payments, true, false); ?> </p>
+                        </div>
+                    <?php endif; ?>
+            <?php endif; ?>
+
+            <div class="laybuy-footer">
+                <div class="laybuy_footer-wrapper">
+                    <div class="laybuy-footer__img">
+                        <img class="left-column" src="<?php echo Mage::helper('laybuy')->getMagentoAssetUrl('checkout/pay.jpg') ?>">
+                    </div>
+                    <div class="laybuy-footer__img">
+                        <img src="<?php echo Mage::helper('laybuy')->getMagentoAssetUrl('checkout/schedule.jpg') ?>">
+                    </div>
+                    <div class="laybuy-footer__img">
+                        <img class="left-column second-row" src="<?php echo Mage::helper('laybuy')->getMagentoAssetUrl('checkout/complete.jpg') ?>">
+                    </div>
+                    <div class="laybuy-footer__img">
+                        <img class="second-row" src="<?php echo Mage::helper('laybuy')->getMagentoAssetUrl('checkout/done.jpg') ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
