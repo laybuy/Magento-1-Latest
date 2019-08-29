@@ -670,6 +670,10 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
      */
     public function processPendingTransaction($transaction)
     {
+        /** @var $appEmulation Mage_Core_Model_App_Emulation */
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $info = $appEmulation->startEnvironmentEmulation($transaction->getStoreId());
+
         $token = $transaction->getLaybuyToken();
         $layBuyOrderId = $transaction->getLaybuyOrderId();
         if (!$layBuyOrderId) {
@@ -678,6 +682,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
                 $laybuyResult = $this->confirmOrder($params);
             } catch (Exception $e) {
                 $this->getLogger()->debug('Unable to confirm Laybuy order.  ' . $e->getMessage());
+                $appEmulation->stopEnvironmentEmulation($info);
                 return $this;
             }
             $resultStatus = (string)$laybuyResult->result;
@@ -688,6 +693,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
                     ->save();
                 $this->getLogger()->debug('Update pending transaction ' . $transaction->getId()
                     . ' with Laybuy order number ' . $layBuyOrderId);
+                $appEmulation->stopEnvironmentEmulation($info);
                 return $this;
             } else {
                 $message = 'Laybuy payment failed.';
@@ -698,6 +704,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
                 }
                 $this->getLogger()->debug('Cancel pending transaction. ' . $message);
                 $transaction->cancel($message);
+                $appEmulation->stopEnvironmentEmulation($info);
                 return $this;
             }
         }
@@ -711,10 +718,6 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
             $transaction->cancel($message);
             return $this;
         }
-
-        /** @var $appEmulation Mage_Core_Model_App_Emulation */
-        $appEmulation = Mage::getSingleton('core/app_emulation');
-        $info = $appEmulation->startEnvironmentEmulation($transaction->getStoreId());
 
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = Mage::getModel('sales/quote')->load($transaction->getQuoteId());
