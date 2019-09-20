@@ -247,7 +247,9 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
     protected function createLaybuyOrder(Mage_Sales_Model_Quote $quote)
     {
         // Reserve order ID
-        if (self::ACTION_AUTHORIZE_CAPTURE === (string)$this->getConfigPaymentAction()) {
+        if ((self::ACTION_AUTHORIZE_CAPTURE === (string)$this->getConfigPaymentAction())
+            || !$quote->getReservedOrderId()
+        ) {
             $quote->reserveOrderId()->save();
         }
 
