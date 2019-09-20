@@ -615,7 +615,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
             round($quote->getGrandTotal()),
         );
 
-        return md5(implode('-', $keyInfo));
+        return hash('sha256', implode('-', $keyInfo));
     }
 
     /**
@@ -744,7 +744,6 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
             try {
                 $service->submitAll();
                 $order = $service->getOrder();
-                echo 'order created' . "\n";
             } catch (Exception $e) {
                 $order = false;
                 $this->getLogger()->debug('Error creating order: ' . $e->getMessage());
