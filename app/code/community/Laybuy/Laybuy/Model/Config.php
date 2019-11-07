@@ -18,6 +18,7 @@ class Laybuy_Laybuy_Model_Config
     const API_ORDER_CREATE = '/order/create';
     const API_ORDER_CONFIRM = '/order/confirm';
     const API_ORDER_CANCEL = '/order/cancel';
+    const API_ORDER_REFUND = '/order/refund';
     const API_OPTIONS_CURRENCIES = '/options/currencies';
 
     const API_KEY_STATUS = 'status';

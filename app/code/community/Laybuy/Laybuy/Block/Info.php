@@ -76,6 +76,7 @@ class Laybuy_Laybuy_Block_Info extends Mage_Payment_Block_Info
 
         $additionalInfoHeadings = array(
             'laybuy_order_id'  => $this->__('Laybuy Order Id'),
+            'laybuy_refund_id' => $this->__('Laybuy Refund Id'),
             'result'           => $this->__('Laybuy Status'),
             'error'            => $this->__('Error Response'),
             'errordescription' => $this->__('Error Description'),

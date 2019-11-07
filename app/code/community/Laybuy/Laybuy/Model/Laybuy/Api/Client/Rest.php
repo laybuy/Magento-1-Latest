@@ -219,6 +219,17 @@ class Laybuy_Laybuy_Model_Laybuy_Api_Client_Rest implements Laybuy_Laybuy_Model_
     }
 
     /**
+     * @param $params
+     * @return bool|mixed
+     * @throws Zend_Http_Client_Exception
+     */
+    public function refund($params)
+    {
+        $result = $this->_call(Laybuy_Laybuy_Model_Config::API_ORDER_REFUND, $params, Zend_Http_Client::POST);
+        return $result;
+    }
+
+    /**
      * @return bool|mixed
      * @throws Zend_Http_Client_Exception
      */

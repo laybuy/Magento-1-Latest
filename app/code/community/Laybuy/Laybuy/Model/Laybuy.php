@@ -17,7 +17,8 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
     protected $_canAuthorize = true;
     protected $_canCapture = true;
     protected $_canUseForMultishipping = false;
-
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = true;
 
     /**
      * @var null|Laybuy_Laybuy_Model_Laybuy_Api_Client_Interface
@@ -45,6 +46,65 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
         parent::order($payment, $amount);
         /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment->setIsTransactionPending(true);
+        return $this;
+    }
+
+    /**
+     * @param Varien_Object $payment
+     * @param float $amount
+     * @return $this|Mage_Payment_Model_Abstract
+     * @throws Mage_Core_Exception
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $laybuyOrderId = $payment->getAdditionalInformation('laybuy_order_id');
+        $incrementId = $payment->getOrder()->getIncrementId();
+
+        if (!$laybuyOrderId) {
+            $this->getLogger()->debug('Missing Laybuy order id for Magento order #' . $incrementId);
+            Mage::throwException('Unable to process online refund due to invalid Laybuy order id.');
+        }
+
+        $params = array(
+            'orderId'         => $laybuyOrderId,
+            'amount'          => $amount,
+        );
+        $this->getLogger()->debug('Refund Laybuy order: ' . $laybuyOrderId . ' for Magento order #' . $incrementId);
+        $result = $this->getApiClient()->refund($params);
+
+        if (Laybuy_Laybuy_Model_Config::LAYBUY_FAILURE === (string)$result->result) {
+            $this->getLogger()->debug('LayBuy API Client error: ' . $result->error);
+            $message = !empty($result->error) ? 'Laybuy API error: ' . $result->error : 'Laybuy API error';
+            Mage::throwException($message);
+        }
+
+        if (Laybuy_Laybuy_Model_Config::LAYBUY_SUCCESS === (string)$result->result) {
+            $message = 'Laybuy order ' . $laybuyOrderId . ' refunded.';
+            $message .= !empty($result->refundId) ? ' Laybuy Refund Id: ' . $result->refundId : '';
+            $this->getLogger()->debug($message);
+            try {
+                $payment->setAdditionalInformation('laybuy_refund_id', $result->refundId);
+                $payment->save();
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
+        } else {
+            Mage::throwException('Laybuy API error. Unable to process refund.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Creditmemo $creditmemo
+     * @param Mage_Sales_Model_Order_Payment $payment
+     * @return $this|Mage_Payment_Model_Method_Abstract
+     */
+    public function processCreditmemo($creditmemo, $payment)
+    {
+        $laybuyOrderId = $payment->getAdditionalInformation('laybuy_order_id');
+        $refundId = $payment->getAdditionalInformation('laybuy_refund_id');
+        $creditmemo->setTransactionId($laybuyOrderId . '_' . $refundId);
         return $this;
     }
 
