@@ -58,7 +58,8 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
     public function refund(Varien_Object $payment, $amount)
     {
         $laybuyOrderId = $payment->getAdditionalInformation('laybuy_order_id');
-        $incrementId = $payment->getOrder()->getIncrementId();
+        $order = $payment->getOrder();
+        $incrementId = $order->getIncrementId();
 
         if (!$laybuyOrderId) {
             $this->getLogger()->debug('Missing Laybuy order id for Magento order #' . $incrementId);
@@ -70,7 +71,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
             'amount'          => $amount,
         );
         $this->getLogger()->debug('Refund Laybuy order: ' . $laybuyOrderId . ' for Magento order #' . $incrementId);
-        $result = $this->getApiClient()->refund($params);
+        $result = $this->getApiClient($order->getStoreId())->refund($params);
 
         if (Laybuy_Laybuy_Model_Config::LAYBUY_FAILURE === (string)$result->result) {
             $this->getLogger()->debug('LayBuy API Client error: ' . $result->error);
@@ -383,7 +384,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
                 continue;
             }
             $layBuyOrder->items[$i]              = new stdClass();
-            $layBuyOrder->items[$i]->id          = $item->getId();
+            $layBuyOrder->items[$i]->id          = $item->getSku();
             $layBuyOrder->items[$i]->description = $item->getName();
             $layBuyOrder->items[$i]->quantity    = $item->getQty();
             $layBuyOrder->items[$i]->price       = number_format($price, 2, '.', '');
@@ -653,7 +654,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
         try {
             $payment = $order->getPayment();
             if (isset($data['laybuy_order_id'])) {
-                $payment->setTransactionId($data['laybuy_order_id'] . '_' . $token);
+                $payment->setLastTransId($data['laybuy_order_id'] . '_' . $token);
             }
             foreach ($data as $key => $value) {
                 $payment->setAdditionalInformation($key, $value);
