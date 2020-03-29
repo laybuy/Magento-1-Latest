@@ -167,6 +167,22 @@ class Laybuy_Laybuy_Model_Laybuy_Api_Client_Rest implements Laybuy_Laybuy_Model_
     }
 
     /**
+     * @param $reference
+     * @return bool
+     * @throws Zend_Http_Client_Exception
+     */
+    public function confirmMerchantOrder($reference)
+    {
+        $result = $this->confirmMerchant($reference);
+        if (Laybuy_Laybuy_Model_Config::LAYBUY_SUCCESS === (string)$result->result
+            && $result->merchantReference == $reference
+        ) {
+            return $result;
+        }
+        return false;
+    }
+
+    /**
      * @param $token
      * @return bool
      * @throws Zend_Http_Client_Exception
@@ -216,6 +232,17 @@ class Laybuy_Laybuy_Model_Laybuy_Api_Client_Rest implements Laybuy_Laybuy_Model_
             $params = array(Laybuy_Laybuy_Model_Config::API_KEY_TOKEN => $params);
         }
         return $this->_call(Laybuy_Laybuy_Model_Config::API_ORDER_CONFIRM, $params, Zend_Http_Client::POST);
+    }
+
+    /**
+     * @param $merchantReference
+     * @return bool|mixed
+     * @throws Zend_Http_Client_Exception
+     */
+    public function confirmMerchant($merchantReference)
+    {
+        $path = Laybuy_Laybuy_Model_Config::API_ORDER_MERCHANT . '/' . $merchantReference;
+        return $this->_call($path, array(), Zend_Http_Client::GET);
     }
 
     /**

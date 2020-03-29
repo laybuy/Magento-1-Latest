@@ -17,6 +17,7 @@ class Laybuy_Laybuy_Model_Config
     const API_ENDPOINT_SANDBOX = 'https://sandbox-api.laybuy.com';
     const API_ORDER_CREATE = '/order/create';
     const API_ORDER_CONFIRM = '/order/confirm';
+    const API_ORDER_MERCHANT = '/order/merchant';
     const API_ORDER_CANCEL = '/order/cancel';
     const API_ORDER_REFUND = '/order/refund';
     const API_OPTIONS_CURRENCIES = '/options/currencies';

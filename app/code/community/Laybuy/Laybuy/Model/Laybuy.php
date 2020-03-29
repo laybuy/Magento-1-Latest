@@ -482,6 +482,16 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
+     * @param string $reference
+     * @return mixed
+     * @throws Mage_Core_Exception
+     */
+    public function confirmMerchantOrder($reference)
+    {
+        return $this->getApiClient()->confirmMerchantOrder($reference);
+    }
+
+    /**
      * @param $token
      * @return bool
      * @throws Mage_Core_Exception
@@ -852,78 +862,39 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
+     * Call Laybuy order/merchant api to confirm merchant order reference
      * @param Mage_Sales_Model_Order $order
      */
     public function processPendingOrder($order)
     {
-        if (!$order->getId() && !$order->getQuoteId()) {
-            return;
-        }
-
-        /** @var $appEmulation Mage_Core_Model_App_Emulation */
-        $appEmulation = Mage::getSingleton('core/app_emulation');
-        $info = $appEmulation->startEnvironmentEmulation($order->getStoreId());
-
-        $token = null;
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
-        if ($quote && $quote->getId()) {
-            $token = $quote->getPayment()->getAdditionalInformation('token');
-            if ($token) {
-                $params = array(Laybuy_Laybuy_Model_Config::API_KEY_TOKEN => $token);
-                try {
-                    $laybuyResult = $this->confirmOrder($params);
-                } catch (Exception $e) {
-                    $this->getLogger()->debug('Unable to confirm Laybuy order.  ' . $e->getMessage());
-                    $appEmulation->stopEnvironmentEmulation($info);
-                    return;
-                }
-
-                $resultStatus = (string)$laybuyResult->result;
-                $this->getLogger()->debug('Laybuy status ' . $resultStatus . ' for pending Magento order ' . $order->getIncrementId());
-                if (Laybuy_Laybuy_Model_Config::LAYBUY_SUCCESS === $resultStatus && $laybuyResult->orderId) {
-                    $layBuyOrderId = $laybuyResult->orderId;
-                    $this->getLogger()->debug('Payment confirmed for Laybuy order ' . $layBuyOrderId . ' for Magento order ' . $order->getIncrementId());
-                    try {
-                        if ($this->processLaybuySuccessPayment($order, $token, $layBuyOrderId)) {
-                            $this->getLogger()->debug('Magento pending order '  . $order->getIncrementId() . ' status updated.');
-                        } else {
-                            $this->getLogger()->debug('Unable to update pending Magento order '. $order->getIncrementId()
-                                . ' for Laybuy order ' . $layBuyOrderId);
-                        }
-                    } catch (Exception $e) {
-                        $this->getLogger()->debug('Error updating Magento order ' . $order->getIncrementId() . ': ' . $e->getMessage());
-                    }
-                    $appEmulation->stopEnvironmentEmulation($info);
-                    return;
-                }
-                $message = 'Laybuy payment failed';
-                if (Laybuy_Laybuy_Model_Config::LAYBUY_DECLINED === $resultStatus) {
-                    $message = 'Laybuy payment declined: ' . $laybuyResult->errordescription;
-                } elseif (Laybuy_Laybuy_Model_Config::LAYBUY_FAILURE === $resultStatus) {
-                    if (strpos($laybuyResult->error, 'ACTIVE') !== false) {
-                        $this->getLogger()->debug('Laybuy user session still active, do not cancel.');
-                        $appEmulation->stopEnvironmentEmulation($info);
-                        return;
-                    }
-                    $message = 'Laybuy payment error: ' . $laybuyResult->error;
-                }
-                $result = (array)$laybuyResult;
-                $this->updatePayment($order, $token, $result);
-            } else {
-                $message = 'Unable to confirm Laybuy order: missing token';
-            }
-        } else {
-            $message = 'Unable to confirm Laybuy order: quote no longer available';
-        }
-
-        $this->getLogger()->debug($message);
         try {
-            $this->cancelMagentoOrder($order, $token, $message);
+            /** @var $appEmulation Mage_Core_Model_App_Emulation */
+            $appEmulation = Mage::getSingleton('core/app_emulation');
+            $info = $appEmulation->startEnvironmentEmulation($order->getStoreId());
+            $laybuyOrder = $this->confirmMerchantOrder($order->getIncrementId());
+            if (!$laybuyOrder) {
+                $message = 'Laybuy order not found.';
+                $this->getLogger()->debug('Cancel Magento pending order '  . $order->getIncrementId() . '. Response: ' . $message);
+                $this->cancelMagentoOrder($order, null, $message);
+                $appEmulation->stopEnvironmentEmulation($info);
+                return;
+            }
+            $layBuyOrderId = $laybuyOrder->orderId;
+            $this->getLogger()->debug('Payment confirmed for Laybuy order ' . $layBuyOrderId . ' for Magento order ' . $order->getIncrementId());
+            try {
+                $this->processLaybuySuccessPayment($order, $laybuyOrder->token, $layBuyOrderId);
+                $this->getLogger()->debug('Magento pending order '  . $order->getIncrementId() . ' status updated.');
+                $appEmulation->stopEnvironmentEmulation($info);
+                return;
+            } catch (Exception $e) {
+                $this->getLogger()->debug('Error updating Magento order ' . $order->getIncrementId() . ': ' . $e->getMessage());
+            }
         } catch (Exception $e) {
-            $this->getLogger()->debug('Error cancelling Magento order ' . $order->getIncrementId() . ': ' . $e->getMessage());
-            Mage::logException($e);
+            $this->getLogger()->debug('Error processing pending Magento order ' . $order->getIncrementId() . ': ' . $e->getMessage());
         }
+
+        $message = 'Laybuy order ' . $layBuyOrderId . ' unable to be confirmed for order ' . $order->getIncrementId();
+        $this->getLogger()->debug($message);
         $appEmulation->stopEnvironmentEmulation($info);
         return;
     }
