@@ -584,7 +584,7 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
         $order->addStatusHistoryComment('Payment approved by Laybuy, Laybuy Order ID: ' . $laybuyOrderId);
 
         // Create Invoice
-        $invoice = $order->prepareInvoice($order);
+        $invoice = $order->prepareInvoice();
         $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
         $invoice->register();
 
