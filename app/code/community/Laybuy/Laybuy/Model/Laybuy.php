@@ -882,7 +882,8 @@ class Laybuy_Laybuy_Model_Laybuy extends Mage_Payment_Model_Method_Abstract
             $layBuyOrderId = $laybuyOrder->orderId;
             $this->getLogger()->debug('Payment confirmed for Laybuy order ' . $layBuyOrderId . ' for Magento order ' . $order->getIncrementId());
             try {
-                $this->processLaybuySuccessPayment($order, $laybuyOrder->token, $layBuyOrderId);
+                $token = (isset($laybuyOrder->token)) ? $laybuyOrder->token : null;
+                $this->processLaybuySuccessPayment($order, $token, $layBuyOrderId);
                 $this->getLogger()->debug('Magento pending order '  . $order->getIncrementId() . ' status updated.');
                 $appEmulation->stopEnvironmentEmulation($info);
                 return;
