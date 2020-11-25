@@ -26,6 +26,9 @@ class Laybuy_Laybuy_Block_Cms extends Mage_Core_Block_Template
             case 'GBP' :
                 $code = 'gb';
                 break;
+            case 'USD' :
+                $code = 'us';
+                break;
             default :
                 $code = 'nz';
                 break;

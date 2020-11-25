@@ -55,7 +55,7 @@ class Laybuy_Laybuy_Model_Config
     /**
      * List of supported currency codes
      */
-    const SUPPORTED_CURRENCY_CODES = array('NZD', 'AUD', 'GBP');
+    const SUPPORTED_CURRENCY_CODES = array('NZD', 'AUD', 'GBP', 'USD');
 
     /**
      * @return string
