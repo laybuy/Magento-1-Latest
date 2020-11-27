@@ -20,7 +20,6 @@ configured.
 3. Enable the module configuration, see below for configuration options. 
 
 ## Configuration
-
 For configuration go to System > Configuration > Sales > Payment Methods > Laybuy Payment
 
 ##### Sandbox
